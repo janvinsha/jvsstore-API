@@ -44,9 +44,10 @@ connectDB();
 mongoose.set('useCreateIndex', true);
 //1)GLOBAL MIDDLEWARES
 //Implement cors
-app.use(cors())
 //Access-Control-Allow-Origin *
+app.use(cors({ origin:"https://janvinshastores.herokuapp.com"}))
 // app.options('*',cors()) do not allow other websites to delete
+app.options('*',cors({ origin:"https://janvinshastores.herokuapp.com"}))
 //Set Security HTTP headers
 app.use(helmet())
 // Development logging
