@@ -55,7 +55,7 @@ const usersSchema = new mongoose.Schema(
     },
     photo: {
       name: { type:String ,default:"default.jpeg"},
-    url: {type:String, default:"http://127.0.0.1:5000/api/v1/uploads/default.jpeg"},}
+    url: {type:String, default:"https://jvsstoreapi.herokuapp.com/api/v1/uploads/default.jpeg"},}
   },
   {
     toJSON: { virtuals: true },
