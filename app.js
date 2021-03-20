@@ -47,6 +47,7 @@ mongoose.set('useCreateIndex', true);
 //Access-Control-Allow-Origin *
 app.use(cors({ origin:"https://janvinshastores.herokuapp.com",  credentials: true,}))
 // app.options('*',cors()) do not allow other websites to delete
+app.options('*',cors({ origin:"https://janvinshastores.herokuapp.com",  credentials: true,}))
 //Set Security HTTP headers
 app.use(helmet())
 // Development logging
@@ -59,7 +60,7 @@ const loginLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   message: 'Too many requests from this Ip, na wao, please try again later',
 });
-app.use('/api/v1/user/login', loginLimiter);
+app.use('/api/v1/users/login', loginLimiter);
 //Body parser, reading data from the body into req.body
 const bodyParser = require('body-parser');
 app.use(express.json({ limit: '10kb' }));
