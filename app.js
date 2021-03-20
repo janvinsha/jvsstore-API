@@ -56,9 +56,9 @@ if (process.env.NODE_ENV === 'development') {
 }
 //limit request from same APO
 const loginLimiter = rateLimit({
-  max: 1,
+  max: 100,
   windowMs: 60 * 60 * 1000,
-  message: 'Too many requests from this Ip, na wao, please try again later',
+  message: 'Too many requests from this Ip, na wao, please try again after one hour',
 });
 app.use('/api/v1/users/login', loginLimiter);
 //Body parser, reading data from the body into req.body
