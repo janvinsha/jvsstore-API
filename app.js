@@ -47,7 +47,6 @@ mongoose.set('useCreateIndex', true);
 //Access-Control-Allow-Origin *
 app.use(cors({ origin:"https://janvinshastores.herokuapp.com",  credentials: true,}))
 // app.options('*',cors()) do not allow other websites to delete
-app.options('*',cors({ origin:"https://janvinshastores.herokuapp.com",  credentials: true,}))
 //Set Security HTTP headers
 app.use(helmet())
 // Development logging
