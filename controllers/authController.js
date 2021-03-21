@@ -42,9 +42,7 @@ exports.register = catchAsync(async (req, res, next) => {
   await newUser.save({ validateBeforeSave: false });
   //3)SEND IT TO USERS EMAIL
   try {
-    const confirmURL = `${req.protocol}://${req.get(
-      'host'
-    )}/?verify=${confirmToken}`;
+    const confirmURL = `https://janvinshastores.herokuapp.com/?verify=${confirmToken}`;
     await new Email(newUser,confirmURL).sendWelcome()
 } catch (err) {
   newUser.emailConfirmToken = undefined
@@ -61,9 +59,7 @@ exports.resendConfirmEmail = catchAsync(async (req, res, next) => {
   //3)SEND IT TO USERS EMAIL
  
   try {
-    const confirmURL = `${req.protocol}://${req.get(
-      'host'
-    )}/?verify=${confirmToken}`;  
+    const confirmURL = `https://janvinshastores.herokuapp.com/?verify=${confirmToken}`;  
       await new Email(user,confirmURL).sendConfirmEmail() 
     res.status(200).json({
       status: 'Success',
@@ -229,9 +225,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     await user.save({ validateBeforeSave: false });
     //3)SEND IT TO USERS EMAIL
     try {
-      const resetURL = `${req.protocol}://${req.get(
-        'host'
-      )}/resetPassword/${resetToken}`;
+      const resetURL = `https://janvinshastores.herokuapp.com/resetPassword/${resetToken}`;
   await new Email(user,resetURL).sendPasswordReset()
       res.status(200).json({
         status: 'success',
