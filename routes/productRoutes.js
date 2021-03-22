@@ -10,6 +10,8 @@ router
   .route('/top-5-cheap')
   .get(productController.aliasTopProducts, productController.getAllProducts);
 router.get("/top-3-products",productController.aliasTop3Products, productController.getAllProducts)
+
+
 router
   .route('/')
   .get(productController.getAllProducts)
@@ -17,9 +19,16 @@ router
     authController.protect,
     authController.restrictTo('moderator', 'admin'),
     productController.uploadProductImages,
-    productController.resizeProductImages,
+    productController.uploadImages,
     productController.createProduct
   );
+  // .post(
+  //   authController.protect,
+  //   authController.restrictTo('moderator', 'admin'),
+  //   productController.uploadProductImages,
+  //   productController.resizeProductImages,
+  //   productController.createProduct
+  // );
 
 //product page
 router
@@ -29,7 +38,7 @@ router
     authController.protect,
     authController.restrictTo('admin', 'moderator'),
     productController.uploadProductImages,
-    productController.resizeProductImages,
+    productController.uploadImages,
     productController.editProduct
   )
   .delete(
@@ -37,6 +46,13 @@ router
     authController.restrictTo('admin'),
     productController.deleteProduct
   );
+  // .patch(
+  //   authController.protect,
+  //   authController.restrictTo('admin', 'moderator'),
+  //   productController.uploadProductImages,
+  //   productController.resizeProductImages,
+  //   productController.editProduct
+  // )
 
 ////aggregation pipeline stuff stats
 router

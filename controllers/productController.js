@@ -1,12 +1,16 @@
 const multer = require('multer');
 const sharp = require('sharp');
+const cloudinary = require('cloudinary').v2;
 const Product = require('./../models/productModel');
 const APIFeatures = require('./../utils/apiFeatures');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('../utils/appError');
 const factory = require('./handlerFactory');
-///
-const multerStorage = multer.memoryStorage();
+
+///MULTER
+const multerStorage = multer.diskStorage({ destination: (req, file, cb) => {
+  cb(null, 'uploads');
+},});
 const multerFilter = (req, file, cb) => {
   if (file.mimetype.startsWith('image/')) {
     cb(null, true);
@@ -22,46 +26,80 @@ exports.uploadProductImages = upload.fields([
   { name: 'image', maxCount: 1 },
   { name: 'images', maxCount: 3 },
 ]);
-//upload.single('image)req.file
-//upload.array('images',6) req.files
-exports.resizeProductImages = catchAsync(async (req, res, next) => {
+// //upload.single('image)req.file
+// //upload.array('images',6) req.files
+// exports.resizeProductImages = catchAsync(async (req, res, next) => {
+//   if (!req.files.image || !req.files.images) return next();
+//   //1)Cover image
+
+//   req.body.image = {
+//     name: `product-${req.params.id || ''}-${Date.now()}-cover.jpeg`,
+//     url: `${req.protocol}://${req.get('host')}/api/v1/uploads/product-${
+//       req.params.id || ''
+//     }-${Date.now()}-cover.jpeg`,
+//   };
+//   await sharp(req.files.image[0].buffer)
+//     .resize(2000, 2000)
+//     .toFormat('jpeg')
+//     .jpeg({ quality: 90 })
+//     .toFile(`uploads/${req.body.image.name}`);
+
+//   //2)Images
+//   req.body.images = [];
+//   await Promise.all(
+//     req.files.images.map(async (file, i) => {
+//       const filename = `product-${req.params.id || ''}-${Date.now()}-${
+//         i + 1
+//       }.jpeg`;
+
+//       await sharp(file.buffer)
+//         .resize(2000, 2000)
+//         .toFormat('jpeg')
+//         .jpeg({ quality: 90 })
+//         .toFile(`uploads/${filename}`);
+//       req.body.images.push({
+//         name: filename,
+//         url: `${req.protocol}://${req.get('host')}/api/v1/uploads/${filename}`,
+//       });
+//     })
+//   );
+
+//   next();
+// });
+cloudinary.config({ 
+  cloud_name: process.env.CLOUD_STORAGE_NAME, 
+  api_key: process.env.CLOUD_STORAGE_API_KEY, 
+  api_secret:  process.env.CLOUD_STORAGE_API_SECRET
+});
+
+exports.uploadImages= catchAsync(async (req, res, next) => {
   if (!req.files.image || !req.files.images) return next();
-  //1)Cover image
-
+  //  1)Cover image
+  const uploadImage=await cloudinary.uploader.upload(
+    req.files.image[0].path,{upload_preset:'jvsstore', width: 2000, height: 2000,crop: "fill"}
+  )
   req.body.image = {
-    name: `product-${req.params.id || ''}-${Date.now()}-cover.jpeg`,
-    url: `${req.protocol}://${req.get('host')}/api/v1/uploads/product-${
-      req.params.id || ''
-    }-${Date.now()}-cover.jpeg`,
+    name:uploadImage.original_filename,
+    url: uploadImage.url
   };
-  await sharp(req.files.image[0].buffer)
-    .resize(2000, 2000)
-    .toFormat('jpeg')
-    .jpeg({ quality: 90 })
-    .toFile(`uploads/${req.body.image.name}`);
-
-  //2)Images
+// 2Upload the rest images
   req.body.images = [];
   await Promise.all(
-    req.files.images.map(async (file, i) => {
-      const filename = `product-${req.params.id || ''}-${Date.now()}-${
-        i + 1
-      }.jpeg`;
-
-      await sharp(file.buffer)
-        .resize(2000, 2000)
-        .toFormat('jpeg')
-        .jpeg({ quality: 90 })
-        .toFile(`uploads/${filename}`);
+    req.files.images.map(async (file) => {
+      console.log(file.path);
+      const uploadImages=await cloudinary.uploader.upload(
+        file.path,{upload_preset:'jvsstore', width: 2000, height: 2000,crop: "fill"}
+      )
       req.body.images.push({
-        name: filename,
-        url: `${req.protocol}://${req.get('host')}/api/v1/uploads/${filename}`,
+        name: uploadImages.original_filename,
+        url:uploadImages.url
       });
     })
   );
+  next()
 
-  next();
-});
+})
+
 //
 exports.aliasTopProducts = async (req, res, next) => {
   req.query.limit = 5;
