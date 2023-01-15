@@ -1,7 +1,7 @@
 {
-  "name": "e-commerce API",
+  "name": "jvsstoreapi",
   "version": "1.0.0",
-  "description": "my first e-commerce API ",
+  "description": "jvsstoreapi",
   "main": "app.js",
   "scripts": {
     "start": "nodemon app.js",
